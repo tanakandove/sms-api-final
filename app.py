@@ -17,7 +17,7 @@ API_SECRET_KEY = os.getenv("API_SECRET_KEY")
 
 @app.route("/")
 def home():
-    return "Africa's Talking API is running securely!"
+    return "Albinism Konnect API running powdered by Africa Talking!"
 
 @app.route("/send-sms", methods=["POST"])
 def send_sms():
