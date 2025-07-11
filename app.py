@@ -3,7 +3,7 @@ import africastalking
 from dotenv import load_dotenv
 import os
 
-# Load environment variable
+# Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
@@ -17,16 +17,14 @@ API_SECRET_KEY = os.getenv("API_SECRET_KEY")
 
 @app.route("/")
 def home():
-    return "Albinism Konnect API running powdered by Africa Talking!"
+    return "Albinism Konnect API running powered by Africa's Talking!"
 
 @app.route("/send-sms", methods=["POST"])
 def send_sms():
-    # Authorization
     client_key = request.headers.get("x-api-key")
     if client_key != API_SECRET_KEY:
         return jsonify({"error": "Unauthorized"}), 401
 
-    # JSON body
     data = request.get_json()
     to = data.get("to")
     message = data.get("message")
@@ -35,7 +33,15 @@ def send_sms():
         return jsonify({"error": "Missing 'to' or 'message'"}), 400
 
     try:
-        response = sms.send(message, [to])
+        # Accept both a single number (string) or list of numbers
+        if isinstance(to, str):
+            recipients = [to]
+        elif isinstance(to, list):
+            recipients = to
+        else:
+            return jsonify({"error": "'to' must be a string or list of strings"}), 400
+
+        response = sms.send(message, recipients)
         return jsonify({"status": "success", "response": response})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
